@@ -4,3 +4,25 @@ services:
     build: .
     ports:
       - 80:80
+    environment:
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+    depends_on:
+      - ${DB_HOST}
+    networks:
+      - mela-docker-network
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      # - POSTGRES_HOST_AUTH_METHOD="trust"
+    networks:
+      - mela-docker-network
+volumes:
+  postgres_data:
+networks:
+  mela-docker-network:
+    external: true

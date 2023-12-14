@@ -244,6 +244,12 @@ const Header = () => {
         <Link href="/pricing" passHref>
           <StyledLink isActive={location.asPath === '/pricing'}>Pricing</StyledLink>
         </Link>
+        <Link href="/app/1/dashboard" passHref>
+          <StyledLink isActive={location.asPath === '/app/1/dashboard'}>App</StyledLink>
+        </Link>
+        <Link href="/user/dashboard" passHref>
+          <StyledLink isActive={location.asPath === '/user/dashboard'}>User</StyledLink>
+        </Link>
       </Nav>
       <ButtonWrapper>
         <Link href="/auth/login" passHref>

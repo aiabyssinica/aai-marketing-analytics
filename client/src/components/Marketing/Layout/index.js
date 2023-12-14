@@ -6,7 +6,7 @@ import Footer from '../Navigation/footer';
 
 const Layout = ({ children }) => {
   const seoData = {
-    title: 'Saas Starter Kit Home page',
+    title: 'Mela Analytics Home page',
     description: 'Saas Starter Kit is a modern and comprehensive SAAS boilerplate.'
   };
 

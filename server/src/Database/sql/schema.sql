@@ -9,13 +9,15 @@ CREATE TABLE users (
   is_email_verified BOOLEAN DEFAULT FALSE
 );
 
-CREATE TABLE organizations (
+CREATE TABLE contacts (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  org_name VARCHAR,
-  primary_email VARCHAR(255) REFERENCES users(email) ON UPDATE CASCADE,
-  stripe_customer_id VARCHAR(255),
-  subscription_id VARCHAR(255),
-  plan_type VARCHAR(255)
+  first_name VARCHAR(255(),
+  last_name VARCHAR(255(),
+  middle_name VARCHAR(255(),
+  email VARCHAR(255(),
+  phone VARCHAR(255(),
+  mobile VARCHAR(255(),
+  socials JSON
 );
 
 CREATE TABLE roles (
@@ -23,6 +25,34 @@ CREATE TABLE roles (
   org_id UUID REFERENCES organizations(id),
   user_id UUID REFERENCES users(id),
   role VARCHAR(255)
+);
+
+CREATE TABLE industry (
+  id INTEGER PRIMARY KEY,
+  "name" VARCHAR(255)
+);
+
+CREATE TABLE organizations (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  org_name VARCHAR(255),
+  primary_email VARCHAR(255) REFERENCES users(email) ON UPDATE CASCADE,
+  industry_id REFERENCES industry(id),
+  category VARCHAR(255),
+  organization_type VARCHAR(255), -- plc, corp, ngo, sole-proprietership
+  address VARCHAR(255),
+  city VARCHAR(255),
+  state VARCHAR(255),
+  country VARCHAR(255),
+  phone_number VARCHAR(255),
+  mobile_number VARCHAR(255),
+  mobile_number_2 VARCHAR(255),
+  mobile_number_3 VARCHAR(255),
+  mobile_number_4 VARCHAR(255),
+  website VARCHAR(255),
+  
+  -- stripe_customer_id VARCHAR(255),
+  -- subscription_id VARCHAR(255),
+  -- plan_type VARCHAR(255)
 );
 
 CREATE TABLE todos (
