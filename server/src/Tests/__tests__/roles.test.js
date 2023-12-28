@@ -3,11 +3,11 @@ import server from '../../app.js';
 import db from '../../Database/sql/db.js';
 const request = supertest(server);
 
-const createOrg = async (org_name) => {
-  let text = `INSERT INTO organizations(org_name)
+const createCompany = async (name) => {
+  let text = `INSERT INTO companies(name)
               VALUES ($1)
               RETURNING id`;
-  let values = [org_name];
+  let values = [name];
 
   let queryResult = await db.query(text, values);
 
@@ -29,7 +29,7 @@ const clearDb = async () => {
   let text1 = `DELETE FROM roles`;
   let text2 = `DELETE FROM todos`;
   let text3 = `DELETE FROM users`;
-  let text4 = `DELETE FROM organizations`;
+  let text4 = `DELETE FROM companies`;
 
   await db.query(text1);
   await db.query(text2);
@@ -43,7 +43,7 @@ afterEach(() => {
 
 describe('GET Role info /get/role', () => {
   it('get role info', async () => {
-    let org = await createOrg('org34423');
+    let org = await createCompany('org34423');
     let user = await createUser('email1@example.com', 'username1', 'firebaseid1');
 
     let res = await request.get(`/api/get/role?org_id=${org.id}&user_id=${user.id}`);
@@ -53,7 +53,7 @@ describe('GET Role info /get/role', () => {
 
 describe('POST API Role /post/role', () => {
   it('create new role', async () => {
-    let org = await createOrg('org323534');
+    let org = await createCompany('org323534');
     let user = await createUser('email2@example.com', 'username2', 'firebaseid2');
 
     let res = await request.post('/api/post/role').send({

@@ -3,16 +3,16 @@ import firebaseAdmin from '../../Config/firebase.js';
 import { sendEmail } from '../../Config/email.js';
 import { UpdateStripeCustomer } from '../stripe/stripeCustomer.js';
 import { UpdateContact } from '../users/contacts.js';
-import { verifyUser } from '../../Model/mongo/auth/authentication.js';
+import { verifyUser } from '../../Model/sql/auth/authentication.js';
 import { CreateContact } from '../users/contacts.js';
 import { nanoid } from 'nanoid';
-import { GetOrgsbyEmail } from '../../Model/mongo/org/org.js';
+import { GetCompaniesbyEmail } from '../../Model/sql/org/org.js';
 import {
   saveUsertoDB,
   getUser,
   updateUsernameModel,
   updateEmailModel
-} from '../../Model/mongo/auth/authentication.js';
+} from '../../Model/sql/auth/authentication.js';
 
 export const CreateUser = async (req, res) => {
   let verify_key = req.body.verify_key;
@@ -25,10 +25,10 @@ export const CreateUser = async (req, res) => {
 
   //save contact to email marketing and sales crm
   let FIRSTNAME = username.split(' ')[0];
-  await CreateContact(email, FIRSTNAME);
+  // await CreateContact(email, FIRSTNAME);
 
   //send welcome email
-  let template = 'welcome';
+  let template = 'welcome to Mela Analytics';
   let locals = { FIRSTNAME };
   await sendEmail(email, template, locals);
 
@@ -44,34 +44,40 @@ export const SignUp = async (req, res) => {
   //remove spaces from url
   let confirmEmailUrl = encodeURI(req.body.confirmEmailUrl);
 
-  //First Check if User exists
-  let userExists = await getUser(email);
+  console.log('Debug... auth:', username);
+  console.log(req.body)
 
+  let userExists = await getUser(email);
+  console.log('user_exists? ', userExists);
   //If user exists send error message, otherwise continue code
   if (userExists) {
     res.status(400).send({ type: 'Failed Sign Up', message: 'User Already Exists' });
     return;
   }
+  try {
+    //decode the firebase token received from frontend and save firebase uuid
+    let decodedToken = await firebaseAdmin.auth().verifyIdToken(token);
+    let firebaseId = decodedToken.user_id;
 
-  //decode the firebase token received from frontend and save firebase uuid
-  let decodedToken = await firebaseAdmin.auth().verifyIdToken(token);
-  let firebaseId = decodedToken.user_id;
-
-  //generate random bytes for user email verify
-  const randomBytes = nanoid();
-  confirmEmailUrl = `
-    ${confirmEmailUrl}/?key=${randomBytes}&isInviteFlow=${isInviteFlow}&invite_key=${invite_key}
-  `;
-
-  //send verification email
-  let template = 'verify email';
-  let locals = { confirmEmailUrl, username };
-  await sendEmail(email, template, locals);
-
-  //save user firebase info to our own db, and get unique user database id
-  await saveUsertoDB(email, username, firebaseId, randomBytes);
-
+    //generate random bytes for user email verify
+    const randomBytes = nanoid();
+    confirmEmailUrl = `
+      ${confirmEmailUrl}/?key=${randomBytes}&isInviteFlow=${isInviteFlow}&invite_key=${invite_key}
+    `;
+    //send verification email
+    // let template = 'verify email';
+    let subject = 'Verify Email';
+    let firstName = username.split(' ')[0];
+    // let locals = { confirmEmailUrl, username };
+    await sendEmail(email, confirmEmailUrl, subject, firstName);
+    //save user firebase info to our own db, and get unique user database id
+    await saveUsertoDB(email, username, firebaseId, randomBytes);
+  }
+  catch {
+    await firebaseAdmin.auth().deleteUser(firebaseId);
+  }
   res.send('Email Confirm Sent');
+
 };
 
 export const Login = async (req, res) => {
@@ -129,9 +135,9 @@ export const updateEmail = async (req, res) => {
 
   //if the update email is an organization primary email,
   //update the email in stripe for all the orgs.
-  let orgs = await GetOrgsbyEmail(oldEmail);
-  if (orgs) {
-    orgs.map(async (org) => {
+  let companies = await GetCompaniesbyEmail(oldEmail);
+  if (companies) {
+    companies.map(async (org) => {
       await UpdateStripeCustomer(org.stripe_customer_id, email);
     });
   }

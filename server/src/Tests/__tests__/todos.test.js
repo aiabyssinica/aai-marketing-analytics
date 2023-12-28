@@ -4,8 +4,8 @@ import server from '../../app.js';
 const request = supertest(server);
 import db from '../../Database/sql/db.js';
 
-const createOrg = async (org_name) => {
-  let text = `INSERT INTO organizations(org_name)
+const createCompany = async (org_name) => {
+  let text = `INSERT INTO companies(org_name)
               VALUES ($1)
               RETURNING id`;
   let values = [org_name];
@@ -41,7 +41,7 @@ const clearDb = async () => {
   let text1 = `DELETE FROM roles`;
   let text2 = `DELETE FROM todos`;
   let text3 = `DELETE FROM users`;
-  let text4 = `DELETE FROM organizations`;
+  let text4 = `DELETE FROM companies`;
 
   await db.query(text1);
   await db.query(text2);
@@ -55,7 +55,7 @@ afterEach(() => {
 
 describe('GET Todo info /get/todos', () => {
   it('get todo info with org id', async () => {
-    let org = await createOrg('org3431');
+    let org = await createCompany('org3431');
 
     let res = await request.get(`/api/get/todos?org_id=${org.id}`);
     expect(res.status).toEqual(200);
@@ -64,7 +64,7 @@ describe('GET Todo info /get/todos', () => {
 
 describe('POST API Todo /post/todo', () => {
   it('create new todo', async () => {
-    let org = await createOrg('org345354');
+    let org = await createCompany('org345354');
     await createUser('email2@example.com', 'user2');
 
     let res = await request.post('/api/post/todo').send({

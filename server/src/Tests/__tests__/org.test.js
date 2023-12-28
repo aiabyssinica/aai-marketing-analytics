@@ -4,11 +4,11 @@ import server from '../../app.js';
 const request = supertest(server);
 import db from '../../Database/sql/db.js';
 
-const createOrg = async (org_name) => {
-  let text = `INSERT INTO organizations(org_name)
+const createCompany = async (name) => {
+  let text = `INSERT INTO companies(name)
               VALUES ($1)
               RETURNING id`;
-  let values = [org_name];
+  let values = [name];
 
   let queryResult = await db.query(text, values);
 
@@ -31,7 +31,7 @@ const clearDb = async () => {
   let text1 = `DELETE FROM roles`;
   let text2 = `DELETE FROM todos`;
   let text3 = `DELETE FROM users`;
-  let text4 = `DELETE FROM organizations`;
+  let text4 = `DELETE FROM companies`;
 
   await db.query(text1);
   await db.query(text2);
@@ -63,7 +63,7 @@ describe('GET Org info /api/org', () => {
 
 describe('DELETE Org  /api/org', () => {
   it('delete org with org id', async () => {
-    let org = await createOrg('org232');
+    let org = await createCompany('org232');
 
     let res = await request.delete(`/api/org?org_id=${org.id}`);
     expect(res.status).toEqual(200);
@@ -72,7 +72,7 @@ describe('DELETE Org  /api/org', () => {
 
 describe('Put Org  /api/org', () => {
   it('update org name with org id', async () => {
-    let org = await createOrg('org232');
+    let org = await createCompany('org232');
 
     let res = await request.put(`/api/org`).send({ org_id: org.id, org_name: 'org3454355' });
     expect(res.status).toEqual(200);

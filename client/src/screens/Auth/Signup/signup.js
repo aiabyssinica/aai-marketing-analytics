@@ -64,6 +64,8 @@ const Signup = () => {
         fetchFailure(error);
       });
 
+    console.log('signup..', authRes);
+
     SignupAuth(
       authRes,
       firebase,

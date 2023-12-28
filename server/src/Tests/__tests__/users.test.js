@@ -14,8 +14,8 @@ export const CreateInvite = async (org_id, randomBytes, recipient_email, sender_
   return;
 };
 
-const createOrg = async (org_name) => {
-  let text = `INSERT INTO organizations(org_name)
+const createCompany = async (org_name) => {
+  let text = `INSERT INTO companies(name)
               VALUES ($1)
               RETURNING id`;
   let values = [org_name];
@@ -29,7 +29,7 @@ const clearDb = async () => {
   let text1 = `DELETE FROM roles`;
   let text2 = `DELETE FROM todos`;
   let text3 = `DELETE FROM users`;
-  let text4 = `DELETE FROM organizations`;
+  let text4 = `DELETE FROM companies`;
   let text5 = `DELETE FROM invites`;
 
   await db.query(text1);
@@ -55,7 +55,7 @@ describe('GET app users info /get/app-users', () => {
 
 describe('POST create user app invite /users/invite', () => {
   it('create a user invite', async () => {
-    let org = createOrg('org34545');
+    let org = createCompany('org34545');
 
     let res = await request.post(`/api/users/invite`).send({
       sender_email: 'Example2335r@example.com',
@@ -71,7 +71,7 @@ describe('POST create user app invite /users/invite', () => {
 describe('POST verify a user invite /users/verify-invite', () => {
   it('verify a user invite', async () => {
     let invite_key = 'ljfghbrlk54354';
-    let org = createOrg('org34545');
+    let org = createCompany('org34545');
 
     await CreateInvite(org.id, invite_key, 'example234435@yahoo.com', 'example2343@yahoo.com');
 

@@ -19,6 +19,8 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       # - POSTGRES_HOST_AUTH_METHOD="trust"
+    ports:
+      - "5432:5432"
     networks:
       - mela-docker-network
 volumes:

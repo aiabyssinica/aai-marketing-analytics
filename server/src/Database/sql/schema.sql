@@ -22,7 +22,7 @@ CREATE TABLE contacts (
 
 CREATE TABLE roles (
   id SERIAL PRIMARY KEY,
-  org_id UUID REFERENCES organizations(id),
+  org_id UUID REFERENCES companies(id),
   user_id UUID REFERENCES users(id),
   role VARCHAR(255)
 );
@@ -32,7 +32,7 @@ CREATE TABLE industry (
   "name" VARCHAR(255)
 );
 
-CREATE TABLE organizations (
+CREATE TABLE companies (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   org_name VARCHAR(255),
   primary_email VARCHAR(255) REFERENCES users(email) ON UPDATE CASCADE,
@@ -49,10 +49,9 @@ CREATE TABLE organizations (
   mobile_number_3 VARCHAR(255),
   mobile_number_4 VARCHAR(255),
   website VARCHAR(255),
-  
-  -- stripe_customer_id VARCHAR(255),
-  -- subscription_id VARCHAR(255),
-  -- plan_type VARCHAR(255)
+  stripe_customer_id VARCHAR(255),
+  subscription_id VARCHAR(255),
+  plan_type VARCHAR(255)
 );
 
 CREATE TABLE todos (
@@ -60,12 +59,12 @@ CREATE TABLE todos (
   title VARCHAR(255),
   description VARCHAR(1000),
   author VARCHAR(255),
-  org_id UUID REFERENCES organizations(id)
+  org_id UUID REFERENCES companies(id)
 );
 
 CREATE TABLE invites (
   id SERIAL PRIMARY KEY,
-  org_id UUID REFERENCES organizations(id),
+  org_id UUID REFERENCES companies(id),
   verify_key VARCHAR(255),
   recipient_email VARCHAR(255),
   sender_email VARCHAR (255)

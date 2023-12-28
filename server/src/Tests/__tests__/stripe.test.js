@@ -4,8 +4,8 @@ import server from '../../app.js';
 const request = supertest(server);
 import db from '../../Database/sql/db.js';
 
-const createOrg = async (org_name, stripe_customer_id, subscription_id, plan_type) => {
-  let text = `INSERT INTO organizations(org_name, stripe_customer_id, subscription_id, plan_type)
+const createCompany = async (org_name, stripe_customer_id, subscription_id, plan_type) => {
+  let text = `INSERT INTO companies(name, stripe_customer_id, subscription_id, plan_type)
               VALUES ($1, $2, $3, $4)
               RETURNING id`;
   let values = [org_name, stripe_customer_id, subscription_id, plan_type];
@@ -19,7 +19,7 @@ const clearDb = async () => {
   let text1 = `DELETE FROM roles`;
   let text2 = `DELETE FROM todos`;
   let text3 = `DELETE FROM users`;
-  let text4 = `DELETE FROM organizations`;
+  let text4 = `DELETE FROM companies`;
 
   await db.query(text1);
   await db.query(text2);
@@ -34,7 +34,7 @@ afterEach(() => {
 describe('GET subscription info API /stripe/get-subscription', () => {
   it('get subscription info', async () => {
     let subId = 'sub3454wfd';
-    await createOrg('org4545646', 'cus454frd45', subId, 'basic');
+    await createCompany('org4545646', 'cus454frd45', subId, 'basic');
 
     let res = await request.get(`/stripe/get-subscription?subscription_id=${subId}`);
     expect(res.status).toEqual(200);
@@ -43,7 +43,7 @@ describe('GET subscription info API /stripe/get-subscription', () => {
 
 describe('POST create subscription API /stripe/create-subscription', () => {
   it('create subscription', async () => {
-    let org = createOrg('org3345');
+    let org = createCompany('org3345');
 
     let res = await request.post('/stripe/create-subscription').send({
       customer: 'custId123',
@@ -60,7 +60,7 @@ describe('POST create subscription API /stripe/create-subscription', () => {
 describe('POST cancel subscription API /stripe/cancel-subscription', () => {
   it('Cancel subscription', async () => {
     let subId = 'sub34f4t5t';
-    let org = await createOrg('org3456t5', 'cus3534tf', subId, 'basic');
+    let org = await createCompany('org3456t5', 'cus3534tf', subId, 'basic');
 
     let res = await request.post('/stripe/cancel-subscription').send({
       org_id: org.id,

@@ -144,7 +144,7 @@ const Dashboard = () => {
         <StyledHeader>Dashboard</StyledHeader>
         <ContentWrapper>
           <AppsSection>
-            <h2>Enter Organizations:</h2>
+            <h2>Enter Companies:</h2>
             <AppsWrapper>
               {!orgs.length == 0 ? (
                 orgs.map((org) => (
@@ -163,7 +163,7 @@ const Dashboard = () => {
             </AppsWrapper>
           </AppsSection>
           <CreateAppWrapper>
-            <h2>Create Organizations:</h2>
+            <h2>Create Companies:</h2>
             <form onSubmit={postOrg}>
               <StyledCard>
                 <TextInputWrapper>

@@ -23,7 +23,7 @@ export const LoginAuth = async (
   //server authentication, returns jwt token
   let email = authRes.user.email;
   let data = { email, token };
-  
+
   // Command out for temporary localhost development. (Unable to axios post to correct port:80)
   let authServerRes = await axios.post(`/auth/login`, data).catch((err) => {
     fetchFailure(err);
@@ -74,7 +74,7 @@ export const SignupAuth = async (
   const isEmailSignup = authRes.additionalUserInfo.providerId === 'password';
   if (isEmailSignup && name) {
     let curUser = await firebase.auth().currentUser;
-
+    console.log('current user:', curUser);
     await curUser
       .updateProfile({
         displayName: name
@@ -91,7 +91,7 @@ export const SignupAuth = async (
     .catch((err) => {
       fetchFailure(err);
     });
-
+  console.log('firebase token:', token);
   //server firebase authentication, returns jwt token
   let username = authRes.user.displayName ? authRes.user.displayName : name;
   let email = authRes.user.email;
@@ -100,11 +100,13 @@ export const SignupAuth = async (
   const confirmEmailUrl = `${domainUrl}/auth/confirmedemail`;
 
   let authData = { email, username, token, confirmEmailUrl, isInviteFlow, invite_key };
-
+  console.log('authdata:', authData);
   await axios.post(`/auth/signup`, authData).catch((err) => {
+    console.error("Axios error:", err.response ? err.response.data : err);
     fetchFailure(err);
   });
 
+  console.log('reached router.push......');
   router.push('/auth/emailconfirm');
 };
 
